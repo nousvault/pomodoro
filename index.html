@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pomodoro by NousVault</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <h1><span>Pomodoro</span> <small>by NousVault</small></h1>
+      <nav class="topnav" aria-label="Primary navigation">
+        <button id="navHome" class="nav-button" type="button" aria-label="Go to home">
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="nav-icon">
+            <path d="M3 11.5 12 4l9 7.5" />
+            <path d="M5.5 10.5V20h13v-9.5" />
+            <path d="M9.5 20v-5h5v5" />
+          </svg>
+          <span>Home</span>
+        </button>
+        <span class="nav-divider" aria-hidden="true"></span>
+        <button id="navSummary" class="nav-button" type="button" aria-label="Open activity summary">
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="nav-icon">
+            <path d="M5 4h14v16H5z" />
+            <path d="M8 8h8" />
+            <path d="M8 12h8" />
+            <path d="M8 16h4" />
+          </svg>
+          <span>Summary</span>
+        </button>
+        <span class="nav-divider" aria-hidden="true"></span>
+        <button id="settingsOpen" class="nav-button" type="button" aria-label="Open settings" aria-haspopup="dialog">
+          <svg viewBox="0 0 64 64" aria-hidden="true" class="nav-icon settings-nav-icon">
+            <path d="M45,14.67l-2.76,2a1,1,0,0,1-1,.11L37.65,15.3a1,1,0,0,1-.61-.76l-.66-3.77a1,1,0,0,0-1-.84H30.52a1,1,0,0,0-1,.77l-.93,3.72a1,1,0,0,1-.53.65l-3.3,1.66a1,1,0,0,1-1-.08l-3-2.13a1,1,0,0,0-1.31.12l-3.65,3.74a1,1,0,0,0-.13,1.26l1.87,2.88a1,1,0,0,1,.1.89L16.34,27a1,1,0,0,1-.68.63l-3.85,1.06a1,1,0,0,0-.74,1v4.74a1,1,0,0,0,.8,1l3.9.8a1,1,0,0,1,.72.57l1.42,3.15a1,1,0,0,1-.05.92l-2.13,3.63a1,1,0,0,0,.17,1.24L19.32,49a1,1,0,0,0,1.29.09L23.49,47a1,1,0,0,1,1-.1l3.74,1.67a1,1,0,0,1,.59.75l.66,3.79a1,1,0,0,0,1,.84h4.89a1,1,0,0,0,1-.86l.58-4a1,1,0,0,1,.58-.77l3.58-1.62a1,1,0,0,1,1,.09l3.14,2.12a1,1,0,0,0,1.3-.15L50,45.06a1,1,0,0,0,.09-1.27l-2.08-3a1,1,0,0,1-.09-1l1.48-3.43a1,1,0,0,1,.71-.59L53.77,35a1,1,0,0,0,.8-1V29.42a1,1,0,0,0-.8-1l-3.72-.78a1,1,0,0,1-.73-.62l-1.45-3.65a1,1,0,0,1,.11-.94l2.15-3.14A1,1,0,0,0,50,18l-3.71-3.25A1,1,0,0,0,45,14.67Z" stroke-width="3.2"/>
+            <circle cx="32.82" cy="31.94" r="9.94" stroke-width="3.2"/>
+          </svg>
+          <span>Settings</span>
+        </button>
+      </nav>
+    </header>
+
+    <main class="page-shell">
+      <section class="main-card sketch-border double-border" aria-label="Pomodoro timer">
+        <section class="timer-column">
+          <div class="tabs" role="tablist" aria-label="Timer modes">
+            <button class="tab active" type="button" data-mode="focus">Focus</button>
+            <button class="tab" type="button" data-mode="short">Short Break</button>
+            <button class="tab" type="button" data-mode="long">Long Break</button>
+          </div>
+
+          <div class="timer-stage">
+            <div id="timerDisplay" class="timer-display" aria-live="polite">25:00</div>
+            <button id="startStop" class="primary-button" type="button">START</button>
+          </div>
+
+          <div class="journey" aria-label="Timer progress">
+            <div class="journey-line"></div>
+            <div id="runnerCat" class="runner-cat" aria-hidden="true">
+              <div class="tiny-cat"></div>
+            </div>
+            <div class="food-tray" aria-hidden="true">
+              <div class="food-face"></div>
+            </div>
+          </div>
+
+          <div class="dashed-separator"></div>
+
+          <section class="tasks-panel" aria-labelledby="tasksTitle">
+            <div class="section-heading">
+              <h2 id="tasksTitle">Tasks</h2>
+              <button id="addTask" class="plus-button" type="button" aria-label="Add task">+</button>
+            </div>
+            <ul id="taskList" class="task-list"></ul>
+          </section>
+        </section>
+
+        <aside class="info-column">
+          <section class="character-card sketch-border" aria-label="Pomodoro character">
+            <div id="characterArt" class="cat-illustration state-cover" aria-hidden="true"></div>
+            <p id="speechBubble" class="speech-bubble" aria-live="polite">
+              Welcome back. Pick a task, press start, and let the small steps stack up.
+            </p>
+          </section>
+
+          <section class="stats-card sketch-border" aria-labelledby="sessionInfo">
+            <h2 id="sessionInfo">SESSION INFO</h2>
+            <dl class="stats-list">
+              <div class="stat-row">
+                <dt>Completed</dt>
+                <dd id="completedCount">0</dd>
+              </div>
+              <div class="stat-row">
+                <dt>Total Focus</dt>
+                <dd id="totalFocus">0m</dd>
+              </div>
+            </dl>
+            <button id="openActivitySummary" class="activity-button" type="button">See Activity Summary</button>
+          </section>
+        </aside>
+
+        <section id="activitySummary" class="activity-summary sketch-border" aria-labelledby="activityTitle" hidden>
+          <button id="backToTimer" class="summary-back" type="button" aria-label="Back to timer">&lt;</button>
+          <header class="summary-header">
+            <h2 id="activityTitle">Activity Summary</h2>
+            <span aria-hidden="true"></span>
+          </header>
+
+          <div class="summary-metrics" aria-label="Activity totals">
+            <article class="summary-metric sketch-border">
+              <div class="metric-icon metric-hours" aria-hidden="true">O</div>
+              <h3>Hours Focused</h3>
+              <strong id="summaryHours">--</strong>
+              <div class="metric-rule"></div>
+            </article>
+            <article class="summary-metric sketch-border">
+              <div class="metric-icon metric-days" aria-hidden="true">[]</div>
+              <h3>Days Accessed</h3>
+              <strong id="summaryDays">--</strong>
+              <div class="metric-rule"></div>
+            </article>
+            <article class="summary-metric summary-metric-active sketch-border">
+              <div class="metric-icon metric-streak" aria-hidden="true">^</div>
+              <h3>Day Streak</h3>
+              <strong id="summaryStreak">--</strong>
+              <div class="metric-rule"></div>
+            </article>
+          </div>
+
+          <section class="summary-chart-card sketch-border" aria-labelledby="focusHoursTitle">
+            <div class="chart-head">
+              <h3 id="focusHoursTitle">Focus Hours</h3>
+              <div class="chart-controls" aria-label="Chart controls">
+                <div class="range-tabs" role="tablist" aria-label="Activity range">
+                  <button class="range-tab active" type="button" data-range="week">Week</button>
+                  <button class="range-tab" type="button" data-range="month">Month</button>
+                  <button class="range-tab" type="button" data-range="year">Year</button>
+                </div>
+                <button id="summaryPrev" class="chart-step" type="button" aria-label="Previous period">&lt;</button>
+                <span id="summaryPeriod" class="chart-period">This Week</span>
+                <button id="summaryNext" class="chart-step" type="button" aria-label="Next period">&gt;</button>
+              </div>
+            </div>
+
+            <div class="chart-area">
+              <div class="y-axis" aria-hidden="true">
+                <span>1.0</span>
+                <span>0.8</span>
+                <span>0.6</span>
+                <span>0.4</span>
+                <span>0.2</span>
+                <span>0</span>
+              </div>
+              <div id="summaryBars" class="summary-bars" aria-label="Focus hours chart"></div>
+            </div>
+
+            <div class="summary-dash"></div>
+            <p class="summary-footnote">* This report uses local activity saved in this browser.</p>
+          </section>
+        </section>
+      </section>
+    </main>
+
+    <div id="settingsOverlay" class="settings-overlay" hidden>
+      <section
+        class="settings-dialog sketch-border"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="settingsTitle"
+      >
+        <aside class="settings-rail" aria-label="Settings sections">
+          <label class="settings-search" for="settingsSearch">
+            <span aria-hidden="true"></span>
+            <input id="settingsSearch" type="search" placeholder="Search" autocomplete="off" />
+          </label>
+          <p>Settings</p>
+          <a href="#timerSettings">Timer</a>
+          <a href="#taskSettings">Task</a>
+          <a href="#soundSettings">Sound</a>
+          <a href="#themeSettings">Theme</a>
+        </aside>
+
+        <div class="settings-content">
+          <header class="settings-header">
+            <h2 id="settingsTitle">SETTING</h2>
+            <button id="settingsClose" class="settings-close" type="button" aria-label="Close settings">x</button>
+          </header>
+
+          <form id="settingsForm" class="settings-form">
+            <section id="timerSettings" class="settings-section">
+              <h3><span aria-hidden="true">o</span> TIMER</h3>
+              <fieldset>
+                <legend>Time (minutes)</legend>
+                <div class="minutes-grid">
+                  <label>
+                    <span>Pomodoro</span>
+                    <input id="settingFocusMinutes" type="number" min="1" max="180" step="1" />
+                  </label>
+                  <label>
+                    <span>Short Break</span>
+                    <input id="settingShortMinutes" type="number" min="1" max="60" step="1" />
+                  </label>
+                  <label>
+                    <span>Long Break</span>
+                    <input id="settingLongMinutes" type="number" min="1" max="90" step="1" />
+                  </label>
+                </div>
+              </fieldset>
+
+              <label class="setting-row">
+                <span>Auto Start Breaks</span>
+                <input id="settingAutoStartBreaks" class="switch-input" type="checkbox" />
+                <span class="switch-ui" aria-hidden="true"></span>
+              </label>
+
+              <label class="setting-row">
+                <span>Auto Start Pomodoros</span>
+                <input id="settingAutoStartPomodoros" class="switch-input" type="checkbox" />
+                <span class="switch-ui" aria-hidden="true"></span>
+              </label>
+
+              <label class="setting-row">
+                <span>Long Break Interval</span>
+                <input id="settingLongBreakInterval" class="compact-input" type="number" min="2" max="12" step="1" />
+              </label>
+            </section>
+
+            <section id="taskSettings" class="settings-section">
+              <h3><span aria-hidden="true">x</span> TASK</h3>
+              <label class="setting-row">
+                <span>Auto Check Tasks</span>
+                <input id="settingAutoCheckTasks" class="switch-input" type="checkbox" />
+                <span class="switch-ui" aria-hidden="true"></span>
+              </label>
+
+              <label class="setting-row">
+                <span>Check to Bottom</span>
+                <input id="settingCheckToBottom" class="switch-input" type="checkbox" />
+                <span class="switch-ui" aria-hidden="true"></span>
+              </label>
+            </section>
+
+            <section id="soundSettings" class="settings-section">
+              <h3><span aria-hidden="true">~</span> SOUND</h3>
+              <label class="setting-row">
+                <span>Alarm Sound</span>
+                <span class="sound-picker">
+                  <select id="settingAlarmSound"></select>
+                  <button id="testAlarmSound" class="mini-action sound-test" type="button">Test</button>
+                </span>
+              </label>
+              <label class="setting-row slider-row">
+                <span>Alarm Volume</span>
+                <input id="settingAlarmVolume" type="range" min="0" max="100" step="1" />
+                <output id="alarmVolumeValue">50</output>
+              </label>
+              <label class="setting-row">
+                <span>Repeat</span>
+                <input id="settingAlarmRepeat" class="compact-input" type="number" min="3" max="3" step="1" disabled />
+              </label>
+            </section>
+
+            <section id="themeSettings" class="settings-section">
+              <h3><span aria-hidden="true">*</span> THEME</h3>
+              <div class="setting-row theme-row">
+                <span>Color Themes</span>
+                <div class="swatches" role="radiogroup" aria-label="Color themes">
+                  <button class="swatch swatch-red" type="button" data-theme="#B94A50" aria-label="Red theme"></button>
+                  <button class="swatch swatch-teal" type="button" data-theme="#2B7E7C" aria-label="Teal theme"></button>
+                  <button class="swatch swatch-blue" type="button" data-theme="#2F6F9F" aria-label="Blue theme"></button>
+                  <button class="swatch swatch-yellow" type="button" data-theme="#FCD660" aria-label="Yellow theme"></button>
+                </div>
+              </div>
+              <label class="setting-row">
+                <span>Hour Format</span>
+                <select id="settingHourFormat">
+                  <option value="24">24-hour</option>
+                  <option value="12">12-hour</option>
+                </select>
+              </label>
+            </section>
+            <p id="settingsEmpty" class="settings-empty">No settings match your search.</p>
+          </form>
+        </div>
+      </section>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
