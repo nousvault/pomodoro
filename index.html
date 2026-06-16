@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pomodoro by NousVault</title>
+    <link rel="icon" type="image/svg+xml" href="assets/nousvault-mark.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -14,33 +15,49 @@
   </head>
   <body>
     <header class="topbar">
-      <h1><span>Pomodoro</span> <small>by NousVault</small></h1>
+      <h1>
+        <img class="brand-mark" src="assets/nousvault-mark.svg" alt="" aria-hidden="true" />
+        <span>Pomodoro</span>
+        <small>by <a class="brand-link" href="https://x.com/nousvault" target="_blank" rel="noreferrer noopener">NousVault</a></small>
+      </h1>
       <nav class="topnav" aria-label="Primary navigation">
         <button id="navHome" class="nav-button" type="button" aria-label="Go to home">
-          <svg viewBox="0 0 24 24" aria-hidden="true" class="nav-icon">
-            <path d="M3 11.5 12 4l9 7.5" />
-            <path d="M5.5 10.5V20h13v-9.5" />
-            <path d="M9.5 20v-5h5v5" />
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" class="nav-icon">
+            <path
+              d="M2 12.2039C2 9.91549 2 8.77128 2.5192 7.82274C3.0384 6.87421 3.98695 6.28551 5.88403 5.10813L7.88403 3.86687C9.88939 2.62229 10.8921 2 12 2C13.1079 2 14.1106 2.62229 16.116 3.86687L18.116 5.10812C20.0131 6.28551 20.9616 6.87421 21.4808 7.82274C22 8.77128 22 9.91549 22 12.2039V13.725C22 17.6258 22 19.5763 20.8284 20.7881C19.6569 22 17.7712 22 14 22H10C6.22876 22 4.34315 22 3.17157 20.7881C2 19.5763 2 17.6258 2 13.725V12.2039Z"
+              stroke="#000000"
+              stroke-width="1.5"
+            ></path>
+            <path d="M15 18H9" stroke="#000000" stroke-width="1.5" stroke-linecap="round"></path>
           </svg>
-          <span>Home</span>
+          <span class="nav-label">Home</span>
         </button>
         <span class="nav-divider" aria-hidden="true"></span>
         <button id="navSummary" class="nav-button" type="button" aria-label="Open activity summary">
-          <svg viewBox="0 0 24 24" aria-hidden="true" class="nav-icon">
-            <path d="M5 4h14v16H5z" />
-            <path d="M8 8h8" />
-            <path d="M8 12h8" />
-            <path d="M8 16h4" />
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" class="nav-icon">
+            <g>
+              <path d="M3 10C3 6.22876 3 4.34315 4.17157 3.17157C5.34315 2 7.22876 2 11 2H13C16.7712 2 18.6569 2 19.8284 3.17157C21 4.34315 21 6.22876 21 10V14C21 17.7712 21 19.6569 19.8284 20.8284C18.6569 22 16.7712 22 13 22H11C7.22876 22 5.34315 22 4.17157 20.8284C3 19.6569 3 17.7712 3 14V10Z" stroke="#000000" stroke-width="1.5"></path>
+              <path d="M8 12H16" stroke="#000000" stroke-width="1.5" stroke-linecap="round"></path>
+              <path d="M8 8H16" stroke="#000000" stroke-width="1.5" stroke-linecap="round"></path>
+              <path d="M8 16H13" stroke="#000000" stroke-width="1.5" stroke-linecap="round"></path>
+            </g>
           </svg>
-          <span>Summary</span>
+          <span class="nav-label">Summary</span>
         </button>
         <span class="nav-divider" aria-hidden="true"></span>
         <button id="settingsOpen" class="nav-button" type="button" aria-label="Open settings" aria-haspopup="dialog">
-          <svg viewBox="0 0 64 64" aria-hidden="true" class="nav-icon settings-nav-icon">
-            <path d="M45,14.67l-2.76,2a1,1,0,0,1-1,.11L37.65,15.3a1,1,0,0,1-.61-.76l-.66-3.77a1,1,0,0,0-1-.84H30.52a1,1,0,0,0-1,.77l-.93,3.72a1,1,0,0,1-.53.65l-3.3,1.66a1,1,0,0,1-1-.08l-3-2.13a1,1,0,0,0-1.31.12l-3.65,3.74a1,1,0,0,0-.13,1.26l1.87,2.88a1,1,0,0,1,.1.89L16.34,27a1,1,0,0,1-.68.63l-3.85,1.06a1,1,0,0,0-.74,1v4.74a1,1,0,0,0,.8,1l3.9.8a1,1,0,0,1,.72.57l1.42,3.15a1,1,0,0,1-.05.92l-2.13,3.63a1,1,0,0,0,.17,1.24L19.32,49a1,1,0,0,0,1.29.09L23.49,47a1,1,0,0,1,1-.1l3.74,1.67a1,1,0,0,1,.59.75l.66,3.79a1,1,0,0,0,1,.84h4.89a1,1,0,0,0,1-.86l.58-4a1,1,0,0,1,.58-.77l3.58-1.62a1,1,0,0,1,1,.09l3.14,2.12a1,1,0,0,0,1.3-.15L50,45.06a1,1,0,0,0,.09-1.27l-2.08-3a1,1,0,0,1-.09-1l1.48-3.43a1,1,0,0,1,.71-.59L53.77,35a1,1,0,0,0,.8-1V29.42a1,1,0,0,0-.8-1l-3.72-.78a1,1,0,0,1-.73-.62l-1.45-3.65a1,1,0,0,1,.11-.94l2.15-3.14A1,1,0,0,0,50,18l-3.71-3.25A1,1,0,0,0,45,14.67Z" stroke-width="3.2"/>
-            <circle cx="32.82" cy="31.94" r="9.94" stroke-width="3.2"/>
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" class="nav-icon settings-nav-icon">
+            <g>
+              <path d="M9 22H15C20 22 22 20 22 15V9C22 4 20 2 15 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22Z" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+              <path d="M15.5699 18.5001V14.6001" stroke="#000000" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
+              <path d="M15.5699 7.45V5.5" stroke="#000000" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
+              <path d="M15.57 12.65C17.0059 12.65 18.17 11.4859 18.17 10.05C18.17 8.61401 17.0059 7.44995 15.57 7.44995C14.134 7.44995 12.97 8.61401 12.97 10.05C12.97 11.4859 14.134 12.65 15.57 12.65Z" stroke="#000000" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
+              <path d="M8.43005 18.5V16.55" stroke="#000000" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
+              <path d="M8.43005 9.4V5.5" stroke="#000000" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
+              <path d="M8.42996 16.5501C9.8659 16.5501 11.03 15.386 11.03 13.9501C11.03 12.5142 9.8659 11.3501 8.42996 11.3501C6.99402 11.3501 5.82996 12.5142 5.82996 13.9501C5.82996 15.386 6.99402 16.5501 8.42996 16.5501Z" stroke="#000000" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
+            </g>
           </svg>
-          <span>Settings</span>
+          <span class="nav-label">Settings</span>
         </button>
       </nav>
     </header>
@@ -48,10 +65,16 @@
     <main class="page-shell">
       <section class="main-card sketch-border double-border" aria-label="Pomodoro timer">
         <section class="timer-column">
-          <div class="tabs" role="tablist" aria-label="Timer modes">
-            <button class="tab active" type="button" data-mode="focus">Focus</button>
-            <button class="tab" type="button" data-mode="short">Short Break</button>
-            <button class="tab" type="button" data-mode="long">Long Break</button>
+          <div class="timer-header">
+            <div class="tabs" role="tablist" aria-label="Timer modes">
+              <button class="tab active" type="button" data-mode="focus">Focus</button>
+              <button class="tab" type="button" data-mode="short">Short Break</button>
+              <button class="tab" type="button" data-mode="long">Long Break</button>
+            </div>
+            <button id="homeMusic" class="home-music" type="button" aria-label="Open background music" aria-haspopup="dialog">
+              <span class="home-music-label">Music</span>
+              <span class="home-music-live" aria-hidden="true"></span>
+            </button>
           </div>
 
           <div class="timer-stage">
@@ -108,26 +131,96 @@
           <button id="backToTimer" class="summary-back" type="button" aria-label="Back to timer">&lt;</button>
           <header class="summary-header">
             <h2 id="activityTitle">Activity Summary</h2>
+            <div class="summary-header-actions">
+              <button id="summaryReset" class="summary-reset" type="button" aria-label="Reset summary">Reset</button>
+            </div>
             <span aria-hidden="true"></span>
           </header>
 
           <div class="summary-metrics" aria-label="Activity totals">
             <article class="summary-metric sketch-border">
-              <div class="metric-icon metric-hours" aria-hidden="true">O</div>
+              <div class="metric-icon metric-hours" aria-hidden="true">
+                <svg viewBox="0 0 511.999 511.999" role="presentation">
+                  <circle style="fill:#CFF09E;" cx="256.004" cy="269.446" r="123.49"></circle>
+                  <g>
+                    <path
+                      style="fill:#507C5C;"
+                      d="M255.999,406.537c-75.588,0-137.083-61.495-137.083-137.083S180.411,132.37,255.999,132.37 s137.083,61.495,137.083,137.083S331.588,406.537,255.999,406.537z M255.999,159.553c-60.599,0-109.9,49.301-109.9,109.9 s49.301,109.9,109.9,109.9s109.9-49.301,109.9-109.9S316.598,159.553,255.999,159.553z"
+                    ></path>
+                    <path
+                      style="fill:#507C5C;"
+                      d="M316.302,283.044H256c-7.506,0-13.591-6.085-13.591-13.591v-61.235 c0-7.506,6.085-13.591,13.591-13.591s13.591,6.085,13.591,13.591v47.645h46.71c7.506,0,13.591,6.085,13.591,13.591 S323.807,283.044,316.302,283.044z"
+                    ></path>
+                    <path
+                      style="fill:#507C5C;"
+                      d="M493.07,58.995c-13.003-13.722-31.306-21.592-50.216-21.592c-17.741,0-34.606,6.711-47.501,18.899 l-11.407,10.533c-2.671,2.465-4.243,5.899-4.364,9.533c-0.121,3.633,1.218,7.164,3.719,9.802l28.887,30.484l-9.701,9.212 c-38.493-39.273-91.112-61.553-146.486-61.553c-57.283,0-109.149,23.611-146.402,61.6l-9.778-9.265l28.88-30.476 c2.499-2.638,3.84-6.169,3.719-9.802s-1.693-7.066-4.364-9.533l-11.407-10.533c-12.895-12.187-29.761-18.899-47.501-18.899 c-18.91,0-37.213,7.871-50.216,21.592c-26.234,27.684-25.054,71.55,2.63,97.784c0.042,0.041,0.086,0.08,0.129,0.121l11.47,10.59 c2.611,2.411,5.918,3.604,9.216,3.604c3.603,0,7.197-1.424,9.869-4.243l28.88-30.476l10.732,10.169 c-25.732,34.278-40.997,76.844-40.997,122.908c0,47.41,16.174,91.11,43.283,125.889l-20.642,19.561 c-5.449,5.163-5.68,13.765-0.516,19.214c2.672,2.82,6.267,4.243,9.867,4.243c3.356,0,6.718-1.235,9.347-3.725l20.043-18.992 c37.046,36.435,87.82,58.953,143.761,58.953s106.717-22.518,143.761-58.953l20.043,18.992c2.629,2.491,5.99,3.725,9.347,3.725 c3.6,0,7.195-1.423,9.867-4.243c5.163-5.449,4.931-14.051-0.516-19.214l-20.642-19.561c27.11-34.777,43.283-78.479,43.283-125.889 c0-7.506-6.085-13.591-13.591-13.591c-7.506,0-13.591,6.085-13.591,13.591c0,98.127-79.832,177.96-177.96,177.96 S78.039,367.58,78.039,269.453s79.834-177.96,177.96-177.96c52.158,0,101.513,22.775,135.411,62.484 c0.118,0.139,0.247,0.258,0.37,0.391c0.067,0.072,0.122,0.151,0.19,0.223c0.06,0.063,0.126,0.116,0.188,0.177 c0.156,0.156,0.315,0.307,0.478,0.454c0.231,0.213,0.468,0.419,0.709,0.613c0.043,0.034,0.088,0.068,0.132,0.102 c2.444,1.91,5.39,2.887,8.35,2.887c3.361,0,6.728-1.24,9.356-3.736l19.698-18.704l28.872,30.468 c2.671,2.819,6.264,4.243,9.869,4.243c3.299,0,6.605-1.193,9.216-3.604l11.47-10.59c0.044-0.041,0.087-0.08,0.129-0.121 C518.124,130.545,519.304,86.679,493.07,58.995z M41.74,138.417l-1.544-1.426c-16.747-15.93-17.442-42.513-1.536-59.299 c8.009-8.452,18.835-13.107,30.485-13.107c10.785,0,21.038,4.088,28.871,11.51c0.042,0.041,0.086,0.08,0.129,0.12l1.354,1.249 L41.74,138.417z M471.803,136.991l-1.544,1.426l-57.759-60.95l1.354-1.249c0.043-0.039,0.086-0.08,0.129-0.12 c7.833-7.422,18.086-11.51,28.871-11.51c11.649,0,22.476,4.655,30.485,13.107C489.245,94.478,488.551,121.061,471.803,136.991z"
+                    ></path>
+                  </g>
+                </svg>
+              </div>
               <h3>Hours Focused</h3>
               <strong id="summaryHours">--</strong>
               <div class="metric-rule"></div>
             </article>
             <article class="summary-metric sketch-border">
-              <div class="metric-icon metric-days" aria-hidden="true">[]</div>
+              <div class="metric-icon metric-days" aria-hidden="true">
+                <svg viewBox="0 0 32 32" role="presentation">
+                  <g transform="matrix(1,0,0,1,-144,-336)">
+                    <g transform="matrix(1.2381,0,0,1.04348,-98.1429,335.783)">
+                      <path
+                        d="M219,6.917C219,6.408 218.83,5.921 218.527,5.561C218.224,5.202 217.813,5 217.385,5C213.473,5 203.527,5 199.615,5C199.187,5 198.776,5.202 198.473,5.561C198.17,5.921 198,6.408 198,6.917C198,11.248 198,21.752 198,26.083C198,26.592 198.17,27.079 198.473,27.439C198.776,27.798 199.187,28 199.615,28C203.527,28 213.473,28 217.385,28C217.813,28 218.224,27.798 218.527,27.439C218.83,27.079 219,26.592 219,26.083C219,21.752 219,11.248 219,6.917Z"
+                        style="fill:#90e0ef;"
+                      ></path>
+                    </g>
+                    <path
+                      d="M167,340L161,340L161,339C161,338.448 160.552,338 160,338C159.448,338 159,338.448 159,339L159,340L153,340L153,339C153,338.448 152.552,338 152,338C151.448,338 151,338.448 151,339L151,340L149,340C148.204,340 147.441,340.316 146.879,340.879C146.316,341.441 146,342.204 146,343L146,363C146,363.796 146.316,364.559 146.879,365.121C147.441,365.684 148.204,366 149,366L171,366C171.796,366 172.559,365.684 173.121,365.121C173.684,364.559 174,363.796 174,363L174,343C174,342.204 173.684,341.441 173.121,340.879C172.559,340.316 171.796,340 171,340L169,340L169,339C169,338.448 168.552,338 168,338C167.448,338 167,338.448 167,339L167,340ZM172,348L172,363C172,363.265 171.895,363.52 171.707,363.707C171.52,363.895 171.265,364 171,364C171,364 149,364 149,364C148.735,364 148.48,363.895 148.293,363.707C148.105,363.52 148,363.265 148,363L148,348L172,348ZM169,342L169,343C169,343.552 168.552,344 168,344C167.448,344 167,343.552 167,343L167,342L161,342L161,343C161,343.552 160.552,344 160,344C159.448,344 159,343.552 159,343L159,342L153,342L153,343C153,343.552 152.552,344 152,344C151.448,344 151,343.552 151,343L151,342L149,342C148.735,342 148.48,342.105 148.293,342.293C148.105,342.48 148,342.735 148,343L148,346L172,346L172,343C172,342.735 171.895,342.48 171.707,342.293C171.52,342.105 171.265,342 171,342L169,342Z"
+                      style="fill:#1990a7;"
+                    ></path>
+                  </g>
+                </svg>
+              </div>
               <h3>Days Accessed</h3>
               <strong id="summaryDays">--</strong>
               <div class="metric-rule"></div>
             </article>
             <article class="summary-metric summary-metric-active sketch-border">
-              <div class="metric-icon metric-streak" aria-hidden="true">^</div>
+              <div class="metric-icon metric-streak" aria-hidden="true">
+                <svg viewBox="-33 0 255 255" role="presentation">
+                  <g>
+                    <path
+                      d="M187.899,164.809 C185.803,214.868 144.574,254.812 94.000,254.812 C42.085,254.812 -0.000,211.312 -0.000,160.812 C-0.000,154.062 -0.121,140.572 10.000,117.812 C16.057,104.191 19.856,95.634 22.000,87.812 C23.178,83.513 25.469,76.683 32.000,87.812 C35.851,94.374 36.000,103.812 36.000,103.812 C36.000,103.812 50.328,92.817 60.000,71.812 C74.179,41.019 62.866,22.612 59.000,9.812 C57.662,5.384 56.822,-2.574 66.000,0.812 C75.352,4.263 100.076,21.570 113.000,39.812 C131.445,65.847 138.000,90.812 138.000,90.812 C138.000,90.812 143.906,83.482 146.000,75.812 C148.365,67.151 148.400,58.573 155.999,67.813 C163.226,76.600 173.959,93.113 180.000,108.812 C190.969,137.321 187.899,164.809 187.899,164.809 Z"
+                      id="path-1"
+                      class="cls-3"
+                      fill-rule="evenodd"
+                    ></path>
+                    <path
+                      d="M94.000,254.812 C58.101,254.812 29.000,225.711 29.000,189.812 C29.000,168.151 37.729,155.000 55.896,137.166 C67.528,125.747 78.415,111.722 83.042,102.172 C83.953,100.292 86.026,90.495 94.019,101.966 C98.212,107.982 104.785,118.681 109.000,127.812 C116.266,143.555 118.000,158.812 118.000,158.812 C118.000,158.812 125.121,154.616 130.000,143.812 C131.573,140.330 134.753,127.148 143.643,140.328 C150.166,150.000 159.127,167.390 159.000,189.812 C159.000,225.711 129.898,254.812 94.000,254.812 Z"
+                      id="path-2"
+                      class="cls-4"
+                      fill-rule="evenodd"
+                    ></path>
+                    <path
+                      d="M95.000,183.812 C104.250,183.812 104.250,200.941 116.000,223.812 C123.824,239.041 112.121,254.812 95.000,254.812 C77.879,254.812 69.000,240.933 69.000,223.812 C69.000,206.692 85.750,183.812 95.000,183.812 Z"
+                      id="path-3"
+                      class="cls-5"
+                      fill-rule="evenodd"
+                    ></path>
+                  </g>
+                  <defs>
+                    <linearGradient id="linear-gradient-1" gradientUnits="userSpaceOnUse" x1="94.141" y1="255" x2="94.141" y2="0.188">
+                      <stop offset="0" stop-color="#ff4d4d"></stop>
+                      <stop offset="1" stop-color="#d61f2c"></stop>
+                    </linearGradient>
+                    <style>
+                      .cls-3 { fill: url(#linear-gradient-1); }
+                      .cls-4 { fill: #ff5a52; }
+                      .cls-5 { fill: #ffb3ad; }
+                    </style>
+                  </defs>
+                </svg>
+              </div>
               <h3>Day Streak</h3>
-              <strong id="summaryStreak">--</strong>
+              <strong id="summaryStreak">0</strong>
               <div class="metric-rule"></div>
             </article>
           </div>
@@ -165,6 +258,45 @@
         </section>
       </section>
     </main>
+
+    <div id="summaryConfirmOverlay" class="summary-confirm-overlay" hidden>
+      <section
+        class="summary-confirm-dialog sketch-border"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="summaryConfirmTitle"
+      >
+        <h3 id="summaryConfirmTitle">Reset activity summary?</h3>
+        <p>This will clear the saved focus history and counters for the summary view.</p>
+        <div class="summary-confirm-actions">
+          <button id="summaryConfirmCancel" class="summary-confirm-cancel" type="button">Cancel</button>
+          <button id="summaryConfirmOk" class="summary-confirm-ok" type="button">Reset</button>
+        </div>
+      </section>
+    </div>
+
+    <div id="musicOverlay" class="music-overlay" hidden>
+      <section class="music-dialog" role="dialog" aria-modal="true" aria-labelledby="musicTitle">
+        <div class="music-body">
+          <section class="music-player-panel">
+            <button id="musicClose" class="music-close" type="button" aria-label="Minimize music player">—</button>
+            <div class="music-now-playing">
+              <p>Now Playing</p>
+              <h3 id="musicTitle">Lofi Playlist</h3>
+              <span id="musicTrackArtist">YouTube</span>
+            </div>
+
+            <div id="musicEmbed" class="music-embed" aria-label="YouTube playlist player"></div>
+
+            <div class="music-controls">
+              <button id="musicPrev" type="button">Prev</button>
+              <button id="musicPlayPause" type="button">Play</button>
+              <button id="musicNext" type="button">Next</button>
+            </div>
+          </section>
+        </div>
+      </section>
+    </div>
 
     <div id="settingsOverlay" class="settings-overlay" hidden>
       <section

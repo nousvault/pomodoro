@@ -11,6 +11,15 @@ const AUDIO_OPTIONS = [
   { label: "Door Chime", value: "assets/audio/door-chime.wav" },
 ];
 
+const MUSIC_PLAYLIST_ID = "PLiL-8m6bgAgHN38YhqXLvDsODsrBgeAFw";
+const MUSIC_PLAYLIST_TITLE = "Lofi Playlist";
+
+const DEFAULT_MUSIC = {
+  volume: 45,
+  playing: false,
+  playlistIndex: 0,
+};
+
 const MODES = {
   focus: { label: "Focus", defaultMinutes: 25 },
   short: { label: "Short Break", defaultMinutes: 5 },
@@ -54,6 +63,7 @@ const SPEECH = {
 };
 
 const els = {
+  topbar: document.querySelector(".topbar"),
   tabs: [...document.querySelectorAll(".tab")],
   timerDisplay: document.querySelector("#timerDisplay"),
   startStop: document.querySelector("#startStop"),
@@ -64,6 +74,8 @@ const els = {
   activitySummary: document.querySelector("#activitySummary"),
   openActivitySummary: document.querySelector("#openActivitySummary"),
   backToTimer: document.querySelector("#backToTimer"),
+  homeMusic: document.querySelector("#homeMusic"),
+  summaryReset: document.querySelector("#summaryReset"),
   summaryHours: document.querySelector("#summaryHours"),
   summaryDays: document.querySelector("#summaryDays"),
   summaryStreak: document.querySelector("#summaryStreak"),
@@ -71,6 +83,17 @@ const els = {
   summaryPeriod: document.querySelector("#summaryPeriod"),
   summaryPrev: document.querySelector("#summaryPrev"),
   summaryNext: document.querySelector("#summaryNext"),
+  summaryConfirmOverlay: document.querySelector("#summaryConfirmOverlay"),
+  summaryConfirmCancel: document.querySelector("#summaryConfirmCancel"),
+  summaryConfirmOk: document.querySelector("#summaryConfirmOk"),
+  musicOverlay: document.querySelector("#musicOverlay"),
+  musicClose: document.querySelector("#musicClose"),
+  musicTrackTitle: document.querySelector("#musicTitle"),
+  musicTrackArtist: document.querySelector("#musicTrackArtist"),
+  musicPlayPause: document.querySelector("#musicPlayPause"),
+  musicPrev: document.querySelector("#musicPrev"),
+  musicNext: document.querySelector("#musicNext"),
+  musicEmbed: document.querySelector("#musicEmbed"),
   rangeTabs: [...document.querySelectorAll(".range-tab")],
   taskList: document.querySelector("#taskList"),
   addTask: document.querySelector("#addTask"),
@@ -107,8 +130,28 @@ let state = loadState();
 let tickTimer = null;
 let idleTimer = null;
 let finishTimer = null;
+let youtubeApiPromise = null;
+let musicPlayer = null;
 let summaryRange = "week";
 let summaryOffset = 0;
+let activeNav = "home";
+
+function syncTopbarOffset() {
+  if (!els.topbar) return;
+  const height = Math.ceil(els.topbar.getBoundingClientRect().height);
+  document.documentElement.style.setProperty("--topbar-height", `${height}px`);
+  document.body.style.paddingTop = `${height}px`;
+}
+
+function scheduleTopbarOffsetSync() {
+  syncTopbarOffset();
+  globalThis.requestAnimationFrame(() => {
+    syncTopbarOffset();
+  });
+  globalThis.setTimeout(() => {
+    syncTopbarOffset();
+  }, 120);
+}
 
 function loadState() {
   const fallback = {
@@ -123,6 +166,7 @@ function loadState() {
     characterState: "cover",
     focusStreak: 0,
     sessions: [],
+    music: normalizeMusic(),
     settings: DEFAULT_SETTINGS,
   };
 
@@ -142,6 +186,7 @@ function loadState() {
       tasks: Array.isArray(saved.tasks) && saved.tasks.length ? saved.tasks : DEFAULT_TASKS,
       sessions: Array.isArray(saved.sessions) ? saved.sessions : [],
       characterState: saved.characterState === "ignored" ? "cover" : saved.characterState || "cover",
+      music: normalizeMusic(saved.music),
     };
   } catch {
     return fallback;
@@ -168,6 +213,14 @@ function normalizeSettings(settings = {}) {
   };
 }
 
+function normalizeMusic(music = {}) {
+  return {
+    volume: clampNumber(music.volume, 0, 100, DEFAULT_MUSIC.volume),
+    playing: false,
+    playlistIndex: clampNumber(music.playlistIndex, 0, 999, DEFAULT_MUSIC.playlistIndex),
+  };
+}
+
 function clampNumber(value, min, max, fallback) {
   const number = Number(value);
   if (!Number.isFinite(number)) return fallback;
@@ -190,6 +243,7 @@ function saveState() {
     running: false,
     startedAt: null,
     endsAt: null,
+    music: { ...state.music, playing: false },
   };
   localStorage.setItem(STORAGE_KEY, JSON.stringify(persisted));
 }
@@ -448,23 +502,29 @@ function render() {
   els.completedCount.textContent = state.completedFocus;
   els.totalFocus.textContent = `${Math.round(state.totalFocusSeconds / 60)}m`;
   renderTabs();
+  renderPrimaryNav();
+  renderMusicPlayer();
   if (!els.activitySummary.hidden) renderActivitySummary();
 }
 
 function showActivitySummary() {
+  activeNav = "summary";
   summaryRange = "week";
   summaryOffset = 0;
   document.body.classList.add("summary-open");
   els.mainCard.classList.add("summary-mode");
   els.activitySummary.hidden = false;
   renderActivitySummary();
+  renderPrimaryNav();
   els.backToTimer.focus();
 }
 
 function showTimerView() {
+  activeNav = "home";
   els.activitySummary.hidden = true;
   els.mainCard.classList.remove("summary-mode");
   document.body.classList.remove("summary-open");
+  renderPrimaryNav();
   els.openActivitySummary.focus();
 }
 
@@ -474,22 +534,63 @@ function renderActivitySummary() {
   const uniqueDays = new Set(sessions.map((session) => toDateKey(new Date(session.completedAt))));
 
   els.summaryHours.textContent = formatHours(totalSeconds);
-  els.summaryDays.textContent = uniqueDays.size ? uniqueDays.size : "--";
+  els.summaryDays.textContent = uniqueDays.size;
   els.summaryStreak.textContent = getDayStreak(uniqueDays);
 
   const chart = getChartData(sessions, summaryRange, summaryOffset);
   els.summaryPeriod.textContent = chart.periodLabel;
   els.summaryBars.innerHTML = "";
+  const hoverHelper = document.createElement("div");
+  hoverHelper.className = "chart-hover-helper";
+  hoverHelper.setAttribute("aria-hidden", "true");
+  hoverHelper.hidden = true;
+  hoverHelper.innerHTML = `
+    <div class="chart-helper-line"></div>
+    <div class="chart-helper-tooltip"></div>
+  `;
+  els.summaryBars.append(hoverHelper);
+  const helperTooltip = hoverHelper.querySelector(".chart-helper-tooltip");
+
+  const hideChartHelper = () => {
+    hoverHelper.hidden = true;
+    hoverHelper.classList.remove("is-visible");
+  };
+
+  const showChartHelper = (item, bar, fill) => {
+    const helperRect = hoverHelper.getBoundingClientRect();
+    const fillRect = fill.getBoundingClientRect();
+    const lineX = fillRect.left - helperRect.left + fillRect.width / 2;
+    const tooltipY = Math.max(6, fillRect.top - helperRect.top - 40);
+    hoverHelper.style.setProperty("--helper-x", `${lineX.toFixed(1)}px`);
+    hoverHelper.style.setProperty("--helper-y", `${tooltipY.toFixed(1)}px`);
+    helperTooltip.textContent = `${item.label}: ${formatSummaryBarValue(item.hours)}`;
+    hoverHelper.hidden = false;
+    hoverHelper.classList.add("is-visible");
+  };
+
   chart.items.forEach((item) => {
     const bar = document.createElement("div");
     const barHeight = Math.max(2, (item.hours / chart.maxHours) * 145);
     bar.className = "bar-item";
+    bar.tabIndex = 0;
+    bar.setAttribute("role", "img");
+    bar.setAttribute("aria-label", `${item.label}: ${formatSummaryBarValue(item.hours)}`);
     bar.innerHTML = `
       <div class="bar-track">
-        <div class="bar-fill" style="--bar-height: ${barHeight.toFixed(1)}px" title="${item.label}: ${item.hours.toFixed(2)}h"></div>
+        <div class="bar-fill" style="--bar-height: ${barHeight.toFixed(1)}px"></div>
       </div>
       <div class="bar-label">${item.label}</div>
     `;
+    const fill = bar.querySelector(".bar-fill");
+    const activate = () => showChartHelper(item, bar, fill);
+    bar.addEventListener("mouseenter", activate);
+    bar.addEventListener("mousemove", activate);
+    bar.addEventListener("click", activate);
+    bar.addEventListener("focus", activate);
+    bar.addEventListener("focusin", activate);
+    bar.addEventListener("mouseleave", hideChartHelper);
+    bar.addEventListener("blur", hideChartHelper);
+    bar.addEventListener("focusout", hideChartHelper);
     els.summaryBars.append(bar);
   });
 
@@ -498,6 +599,194 @@ function renderActivitySummary() {
     tab.classList.toggle("active", active);
     tab.setAttribute("aria-selected", String(active));
   });
+}
+
+function formatSummaryBarValue(hours) {
+  if (!hours) return "0m focused";
+  if (hours < 1) return `${Math.round(hours * 60)}m focused`;
+  const rounded = hours >= 10 ? hours.toFixed(0) : hours.toFixed(1);
+  return `${rounded}h focused`;
+}
+
+function renderPrimaryNav() {
+  const isSettingsOpen = !els.settingsOverlay.hidden;
+  const current = isSettingsOpen ? "settings" : activeNav;
+
+  els.navHome.classList.toggle("is-active", current === "home");
+  els.navSummary.classList.toggle("is-active", current === "summary");
+  els.settingsOpen.classList.toggle("is-active", current === "settings");
+}
+
+function formatMusicTime(seconds) {
+  if (!Number.isFinite(seconds) || seconds <= 0) return "0:00";
+  const whole = Math.floor(seconds);
+  const minutes = Math.floor(whole / 60);
+  const remainder = String(whole % 60).padStart(2, "0");
+  return `${minutes}:${remainder}`;
+}
+
+function syncBodyModalState() {
+  const anyModalOpen = !els.settingsOverlay.hidden || !els.summaryConfirmOverlay.hidden || !els.musicOverlay.hidden;
+  document.body.classList.toggle("modal-open", anyModalOpen);
+}
+
+function loadYouTubeApi() {
+  if (globalThis.YT?.Player) return Promise.resolve();
+  if (youtubeApiPromise) return youtubeApiPromise;
+
+  youtubeApiPromise = new Promise((resolve) => {
+    const previousReady = globalThis.onYouTubeIframeAPIReady;
+    globalThis.onYouTubeIframeAPIReady = () => {
+      previousReady?.();
+      resolve();
+    };
+
+    const existing = document.querySelector('script[data-youtube-iframe-api="true"]');
+    if (!existing) {
+      const script = document.createElement("script");
+      script.src = "https://www.youtube.com/iframe_api";
+      script.async = true;
+      script.dataset.youtubeIframeApi = "true";
+      document.head.append(script);
+    }
+  });
+
+  return youtubeApiPromise;
+}
+
+function renderMusicPlayer() {
+  if (!els.musicOverlay) return;
+
+  els.musicTrackTitle ||= document.querySelector("#musicTitle");
+  els.musicTrackArtist ||= document.querySelector("#musicTrackArtist");
+  els.musicPlayPause ||= document.querySelector("#musicPlayPause");
+  els.homeMusic ||= document.querySelector("#homeMusic");
+
+  if (!els.musicTrackTitle || !els.musicTrackArtist || !els.musicPlayPause || !els.homeMusic) return;
+
+  const currentIndex = musicPlayer?.getPlaylistIndex?.() ?? state.music.playlistIndex ?? 0;
+  const duration = musicPlayer?.getDuration?.() || 0;
+  const currentTime = musicPlayer?.getCurrentTime?.() || 0;
+  const videoData = musicPlayer?.getVideoData?.() || {};
+  const title = videoData.title || MUSIC_PLAYLIST_TITLE;
+  const artist = videoData.author || "YouTube";
+
+  els.musicPlayPause.textContent = state.music.playing ? "Pause" : "Play";
+  els.musicTrackTitle.textContent = title;
+  els.musicTrackArtist.textContent = artist;
+  els.homeMusic.classList.toggle("is-live", state.music.playing);
+  els.homeMusic.setAttribute(
+    "aria-label",
+    state.music.playing ? "Open background music, currently playing" : "Open background music",
+  );
+  state.music.playlistIndex = currentIndex;
+}
+
+async function ensureMusicPlayer() {
+  if (musicPlayer) return musicPlayer;
+
+  await loadYouTubeApi();
+
+  musicPlayer = new YT.Player(els.musicEmbed, {
+    width: "100%",
+    height: "100%",
+    playerVars: {
+      listType: "playlist",
+      list: MUSIC_PLAYLIST_ID,
+      index: state.music.playlistIndex || 0,
+      rel: 0,
+      modestbranding: 1,
+      playsinline: 1,
+      controls: 1,
+      iv_load_policy: 3,
+      origin: window.location.origin,
+    },
+    events: {
+      onReady: (event) => {
+        if (state.music.playing) {
+          event.target.playVideo();
+        } else {
+          event.target.pauseVideo();
+        }
+        renderMusicPlayer();
+      },
+      onStateChange: (event) => {
+        if (!musicPlayer) return;
+        const playingState = globalThis.YT?.PlayerState?.PLAYING;
+        const pausedState = globalThis.YT?.PlayerState?.PAUSED;
+        if (event.data === playingState) {
+          state.music.playing = true;
+        } else if (event.data === pausedState) {
+          state.music.playing = false;
+        }
+        state.music.playlistIndex = musicPlayer.getPlaylistIndex?.() ?? state.music.playlistIndex;
+        saveState();
+        renderMusicPlayer();
+      },
+    },
+  });
+
+  return musicPlayer;
+}
+
+async function playMusic() {
+  await ensureMusicPlayer();
+  try {
+    musicPlayer.playVideo();
+    state.music.playing = true;
+    saveState();
+    renderMusicPlayer();
+  } catch (error) {
+    console.warn("Music could not play.", error);
+  }
+}
+
+function pauseMusic() {
+  if (!musicPlayer) return;
+  musicPlayer.pauseVideo();
+  state.music.playing = false;
+  saveState();
+  renderMusicPlayer();
+}
+
+function toggleMusicPlayback() {
+  if (state.music.playing) {
+    pauseMusic();
+  } else {
+    playMusic();
+  }
+}
+
+async function playNextMusicTrack(autoplay = true) {
+  await ensureMusicPlayer();
+  if (!musicPlayer) return;
+  musicPlayer.nextVideo();
+  state.music.playing = autoplay;
+  saveState();
+  renderMusicPlayer();
+}
+
+async function playPreviousMusicTrack(autoplay = true) {
+  await ensureMusicPlayer();
+  if (!musicPlayer) return;
+  musicPlayer.previousVideo();
+  state.music.playing = autoplay;
+  saveState();
+  renderMusicPlayer();
+}
+
+async function openMusicPlayer() {
+  els.musicOverlay.hidden = false;
+  syncBodyModalState();
+  await ensureMusicPlayer();
+  renderMusicPlayer();
+  els.musicClose.focus();
+}
+
+function closeMusicPlayer() {
+  els.musicOverlay.hidden = true;
+  syncBodyModalState();
+  els.homeMusic.focus();
 }
 
 function getFocusSessions() {
@@ -513,7 +802,7 @@ function getFocusSessions() {
 }
 
 function formatHours(seconds) {
-  if (!seconds) return "--";
+  if (!seconds) return "0m";
   const hours = seconds / 3600;
   if (hours < 1) return `${Math.round(seconds / 60)}m`;
   return `${Number(hours.toFixed(1))}h`;
@@ -524,7 +813,6 @@ function toDateKey(date) {
 }
 
 function getDayStreak(uniqueDays) {
-  if (!uniqueDays.size) return "--";
   let streak = 0;
   const cursor = new Date();
   cursor.setHours(0, 0, 0, 0);
@@ -534,7 +822,36 @@ function getDayStreak(uniqueDays) {
     cursor.setDate(cursor.getDate() - 1);
   }
 
-  return streak || "--";
+  return streak || 0;
+}
+
+function resetSummaryData() {
+  summaryRange = "week";
+  summaryOffset = 0;
+  state.sessions = [];
+  state.completedFocus = 0;
+  state.totalFocusSeconds = 0;
+  state.focusStreak = 0;
+  saveState();
+  render();
+  if (!els.activitySummary.hidden) renderActivitySummary();
+}
+
+function openSummaryConfirm() {
+  els.summaryConfirmOverlay.hidden = false;
+  syncBodyModalState();
+  els.summaryConfirmCancel.focus();
+}
+
+function closeSummaryConfirm() {
+  els.summaryConfirmOverlay.hidden = true;
+  syncBodyModalState();
+  els.summaryReset.focus();
+}
+
+function confirmSummaryReset() {
+  closeSummaryConfirm();
+  resetSummaryData();
 }
 
 function getChartData(sessions, range, offset) {
@@ -667,16 +984,20 @@ function applyTheme() {
 }
 
 function openSettings() {
+  activeNav = "settings";
+  renderPrimaryNav();
   renderSettings();
   filterSettings();
   els.settingsOverlay.hidden = false;
-  document.body.classList.add("modal-open");
+  syncBodyModalState();
   els.settingsClose.focus();
 }
 
 function closeSettings() {
   els.settingsOverlay.hidden = true;
-  document.body.classList.remove("modal-open");
+  activeNav = els.activitySummary.hidden ? "home" : "summary";
+  renderPrimaryNav();
+  syncBodyModalState();
   els.settingsOpen.focus();
 }
 
@@ -785,6 +1106,20 @@ els.navHome.addEventListener("click", () => {
   els.navHome.focus();
 });
 els.backToTimer.addEventListener("click", showTimerView);
+els.homeMusic.addEventListener("click", openMusicPlayer);
+els.summaryReset.addEventListener("click", openSummaryConfirm);
+els.summaryConfirmCancel.addEventListener("click", closeSummaryConfirm);
+els.summaryConfirmOk.addEventListener("click", confirmSummaryReset);
+els.summaryConfirmOverlay.addEventListener("click", (event) => {
+  if (event.target === els.summaryConfirmOverlay) closeSummaryConfirm();
+});
+els.musicClose.addEventListener("click", closeMusicPlayer);
+els.musicOverlay.addEventListener("click", (event) => {
+  if (event.target === els.musicOverlay) closeMusicPlayer();
+});
+els.musicPlayPause.addEventListener("click", toggleMusicPlayback);
+els.musicPrev.addEventListener("click", () => playPreviousMusicTrack(true));
+els.musicNext.addEventListener("click", () => playNextMusicTrack(true));
 
 els.rangeTabs.forEach((tab) => {
   tab.addEventListener("click", () => {
@@ -842,13 +1177,30 @@ els.swatches.forEach((swatch) => {
 
 document.addEventListener("pointerdown", markAction);
 document.addEventListener("keydown", markAction);
+globalThis.addEventListener("resize", scheduleTopbarOffsetSync);
+globalThis.addEventListener("load", scheduleTopbarOffsetSync);
 document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && !els.musicOverlay.hidden) {
+    closeMusicPlayer();
+    return;
+  }
+  if (event.key === "Escape" && !els.summaryConfirmOverlay.hidden) {
+    closeSummaryConfirm();
+    return;
+  }
   if (event.key === "Escape" && !els.settingsOverlay.hidden) closeSettings();
 });
 
 applyTheme();
+scheduleTopbarOffsetSync();
+document.fonts?.ready?.then(scheduleTopbarOffsetSync);
 renderTasks();
 setCharacter(state.characterState);
 render();
 renderSettings();
+renderPrimaryNav();
 scheduleIdle();
+
+if (globalThis.ResizeObserver && els.topbar) {
+  new ResizeObserver(scheduleTopbarOffsetSync).observe(els.topbar);
+}

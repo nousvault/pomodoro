@@ -259,6 +259,7 @@
 - Verified in-browser: summary open/back flow, Week/Month/Year bars, previous/next controls without URL changes, desktop 1280px layout, mobile 390px layout, no horizontal overflow, and no console errors.
 - Compacted the desktop summary: tighter page padding while open, smaller metric cards, and shorter chart. Verified at 1280x720 that the Activity Summary does not require vertical page scroll.
 - Removed the placeholder Edit Goals button from Activity Summary until goals are implemented.
+- Matched the Activity Summary outer width and top spacing to the homepage box by restoring the shared shell padding and 1110px frame.
 
 ## Settings Unsupported Controls Cleanup
 
@@ -301,3 +302,227 @@
 - Replaced the old icon-only settings button with labeled nav actions: Home, Summary, and Settings.
 - Wired Home to return to the timer view, Summary to open Activity Summary, and Settings to open the existing settings modal.
 - Verified at 1280x720 and 390x820: sticky top remains fixed after scroll, no horizontal overflow, nav wraps cleanly on mobile, font weights apply, nav actions work, and no console errors appear.
+
+## Activity Summary Reset Control
+
+### Requirement
+
+- Add a reset button at the top of Activity Summary so the user can clear the stored summary totals.
+
+### Plan
+
+- [x] Add a reset button to the Activity Summary header area.
+- [x] Clear the persisted summary history and totals without changing timer settings or tasks.
+- [ ] Verify the summary resets to zero values and still keeps the page compact.
+
+### Review
+
+- Pending verification.
+
+## Primary Nav Active Underline
+
+### Requirement
+
+- Show an underline under the active top nav label so the user can tell which page is current.
+
+### Plan
+
+- [x] Add an underline treatment to the Home, Summary, and Settings nav labels.
+- [x] Sync the underline with the active page state, including opening and closing Settings.
+- [ ] Verify the underline stays on the current page and does not drift on hover.
+
+### Review
+
+- Pending verification.
+
+## Primary Nav Active State Repaint
+
+### Requirement
+
+- Make the Home/Summary underline move immediately when switching views.
+
+### Plan
+
+- [x] Repaint the primary nav whenever Home or Summary view changes.
+- [ ] Verify the active underline moves instantly on click.
+
+### Review
+
+- Pending verification.
+
+## Activity Summary Outer Box Sharp Corners
+
+### Requirement
+
+- Remove the rounded corners from the outer Activity Summary box so the whole section looks sharper.
+
+### Plan
+
+- [x] Override the inherited border radius on the Activity Summary wrapper.
+- [ ] Verify the outer summary panel now matches the sharp card styling on the homepage.
+
+### Review
+
+- Pending verification.
+
+## Activity Summary Reset Confirmation
+
+### Requirement
+
+- Show a confirmation box before clearing the Activity Summary data.
+
+### Plan
+
+- [x] Add a confirmation dialog for the summary reset action.
+- [x] Wire confirm, cancel, backdrop, and Escape behavior.
+- [ ] Verify the confirmation box opens before reset and the summary still clears correctly after confirming.
+
+### Review
+
+- Pending verification.
+
+## Activity Summary Reset Alignment
+
+### Requirement
+
+- Align the reset button with the summary header flow instead of floating it independently.
+
+### Plan
+
+- [x] Move the reset button into the summary header layout.
+- [ ] Verify the reset button lines up visually with the content below on desktop and mobile.
+
+### Review
+
+- Pending verification.
+
+## Background Music Mini Player
+
+### Requirement
+
+- Add a background music button on the home timer view and open a sketch-style mini player popup.
+- Make the playlist feel like a compact YouTube-style queue with track rows, a disc, playback controls, and progress.
+
+### Plan
+
+- [x] Add the background music button to the home timer header.
+- [x] Remove the background music button from the Activity Summary header.
+- [x] Build a music popup with disc art, playback controls, progress, volume, and a queue-style playlist.
+- [x] Wire playlist selection, play/pause, previous/next, and persisted track/volume state.
+- [ ] Verify the popup opens, the playlist updates, and the player keeps the app style.
+
+### Review
+
+- Pending verification.
+
+## Background Music YouTube Source Swap
+
+### Requirement
+
+- Use the provided YouTube lofi playlist as the music source instead of the local audio queue.
+- Keep the popup simple by removing the queue list and volume slider, and show the playlist cover instead of a rotating disc.
+- Make the popup smaller and remove the left cover section so it feels like a compact MP4-style player.
+
+### Plan
+
+- [x] Replace the local music queue with the YouTube playlist source.
+- [x] Keep the sketch-style popup shell and controls around the playlist player.
+- [x] Remove the queue list and volume slider from the popup.
+- [x] Show the YouTube cover image as the static disc art.
+- [x] Remove the left cover section and tighten the popup size.
+- [ ] Verify the simplified popup opens from home and still feels coherent.
+
+### Review
+
+- Pending verification.
+
+## Music Button Live Indicator Visibility Fix
+
+### Requirement
+
+- Make the live indicator on the `Music` button clearly visible while background playback is active.
+
+### Plan
+
+- [x] Replace the tiny corner pseudo-element with a real in-button live badge.
+- [x] Verify the `Music` button shows the live dot during playback.
+- [x] Record the visibility lesson in `tasks/lessons.md`.
+
+### Review
+
+- Root cause turned out to be twofold: the old badge treatment was too subtle, and the music renderer was also crashing because it still referenced the old title element id.
+- Replaced the pseudo-element badge with a real inline dot inside the `Music` button, then fixed the title selector and added defensive re-querying in `renderMusicPlayer()`.
+- Verified on a fresh local server at `http://localhost:4174/`: while playback is running, the button updates to `class="home-music is-live"`, the aria label changes to `Open background music, currently playing`, and the red live dot renders at `12x12`.
+
+## NousVault Logo Icon
+
+### Requirement
+
+- Use the provided `Vector.svg` as the web logo/icon.
+
+### Plan
+
+- [x] Copy the provided SVG into project assets.
+- [x] Use the SVG as the browser favicon.
+- [x] Add the SVG as the navbar brand mark beside `Pomodoro by NousVault`.
+- [x] Verify the new asset is referenced correctly.
+
+### Review
+
+- Copied the provided vector to `assets/nousvault-mark.svg`.
+- Wired that asset into the document favicon via `link[rel="icon"]`.
+- Added the same SVG as a small navbar brand mark next to `Pomodoro by NousVault`.
+- Verified on a fresh local server at `http://localhost:4174/`: the favicon href resolves to `assets/nousvault-mark.svg`, and the brand mark renders in the header at `24px` tall.
+
+## Sticky Navbar Top Gap Fix
+
+### Requirement
+
+- Prevent the navbar from drifting downward or showing yellow background above it when scrolling upward.
+
+### Plan
+
+- [x] Replace the sticky header behavior with a truly fixed top bar.
+- [x] Reserve the exact header height in page layout using a measured CSS variable.
+- [x] Verify the navbar stays pinned to the viewport top while scrolling.
+
+### Review
+
+- Changed the top bar from `position: sticky` to `position: fixed` so upward scroll bounce no longer lets the page background peek above it.
+- Added `syncTopbarOffset()` in `app.js` to reserve header space from the real rendered header height, with follow-up syncs on load, resize, fonts-ready, and a delayed post-layout pass.
+- Verified on a fresh local server at `http://localhost:4174/`: after scrolling down and back up, the header stays at `top: 0`, and the topmost viewport pixel resolves to the `.topbar` element rather than the yellow page background.
+
+## Summary Chart Hover Helper
+
+### Requirement
+
+- When hovering a Focus Hours chart column, show a helper line and value information for that bar.
+
+### Plan
+
+- [x] Add a hover/focus helper layer to the summary chart.
+- [x] Show a horizontal guide line aligned to the hovered bar height.
+- [x] Show a compact value tooltip with the bar label and focused time.
+- [x] Verify the hover behavior in-browser.
+
+### Review
+
+- Added a lightweight helper overlay inside the existing `summary-bars` container, so the sketch chart keeps its layout while gaining hover detail.
+- Each bar now exposes a readable tooltip like `Mon: 0m focused` and a vertical guide line centered on the current column.
+- Verified on a fresh local server at `http://localhost:4174/`: focusing/clicking a bar reveals the helper layer with `class="chart-hover-helper is-visible"`, the tooltip text, and a vertical dashed guide line centered on the hovered column.
+
+## Summary Chart Helper Alignment Fix
+
+### Requirement
+
+- Keep the summary chart helper aligned to the actually hovered column instead of drifting to a different day.
+
+### Plan
+
+- [x] Replace mixed offset math with measured rectangle positioning for the helper.
+- [x] Verify hovering a mid-week bar keeps the guide and tooltip on that same column.
+
+### Review
+
+- Replaced the helper x-position math with `getBoundingClientRect()` measurements between the hovered bar fill and the helper overlay.
+- Verified on a fresh local server at `http://localhost:4174/`: clicking the Wednesday bar keeps the helper line centered on that same column, with `centerDelta: 0` between the guide and the bar fill center.
