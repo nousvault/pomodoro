@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://pomo.nous.my.id/sitemap.xml
