@@ -180,31 +180,37 @@ button {
   padding: clamp(28px, 5vw, 48px);
 }
 
-.seo-intro {
-  background: #fffdfa;
-  margin: 0 auto 18px;
+.site-footer {
+  margin-top: 32px;
+  padding: 20px 24px;
+  border-top: 1.5px solid var(--charcoal);
+  background: var(--page-bg, #fffbf0);
+}
+
+.footer-inner {
   max-width: 1110px;
-  padding: 18px 22px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 24px;
+  align-items: baseline;
 }
 
-.seo-intro h2 {
-  font-family: var(--brand-font);
-  font-size: 1.15rem;
-  margin: 0 0 10px;
+.footer-inner p {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--charcoal);
+  line-height: 1.5;
+  opacity: 0.75;
 }
 
-.seo-intro p {
-  margin: 0 0 10px;
-  line-height: 1.55;
-}
-
-.seo-intro p:last-child {
-  margin-bottom: 0;
-}
-
-.seo-intro a {
+.footer-links a {
   color: var(--charcoal);
   text-underline-offset: 2px;
+}
+
+.footer-links a:hover {
+  opacity: 1;
 }
 
 body.summary-open .page-shell {
