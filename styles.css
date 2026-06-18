@@ -1781,6 +1781,17 @@ body.summary-open .page-shell {
 
   .settings-dialog {
     grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(0, 1fr);
+    max-height: min(860px, calc(100dvh - 36px));
+    overflow: hidden;
+  }
+
+  .settings-content {
+    max-height: none;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
   }
 
   .settings-rail {
