@@ -1788,7 +1788,7 @@ body.summary-open .page-shell {
     border-right: 0;
     display: grid;
     gap: 8px;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     padding: 14px;
   }
 
