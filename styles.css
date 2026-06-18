@@ -213,6 +213,21 @@ button {
   opacity: 1;
 }
 
+.about-settings-body p {
+  margin: 0 0 0.5rem;
+  font-size: 0.85rem;
+  line-height: 1.55;
+  color: var(--charcoal);
+  opacity: 0.8;
+}
+
+.about-settings-body p:last-child { margin-bottom: 0; }
+
+.about-settings-links a {
+  color: var(--charcoal);
+  text-underline-offset: 2px;
+}
+
 body.summary-open .page-shell {
   padding: clamp(28px, 5vw, 48px);
 }
